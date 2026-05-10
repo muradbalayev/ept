@@ -39,6 +39,16 @@ async def get_config() -> dict:
     return CONFIG.model_dump()
 
 
+@app.get("/api/health")
+async def health() -> dict:
+    return {"ok": True, "service": "maglev-digital-twin-api"}
+
+
+@app.get("/")
+async def root() -> dict:
+    return {"ok": True, "docs": "/docs", "health": "/api/health", "websocket": "/ws/telemetry"}
+
+
 @app.post("/api/reset")
 async def reset() -> dict:
     simulator.reset()
