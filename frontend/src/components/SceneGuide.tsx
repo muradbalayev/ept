@@ -33,12 +33,12 @@ const sceneItems = [
   },
   {
     icon: Goal,
-    title: "Sarı hədəf halqası",
+    title: "Referans halqası",
     text: "Tələb olunan levitasiya məsafəsidir. PID sistemi obyekti bu səviyyədə saxlamağa çalışır.",
   },
   {
     icon: Magnet,
-    title: "Aşağıdakı baza",
+    title: "Dayaq platforması və material nümunəsi",
     text: "Qurğunun mexaniki dayaq hissəsini və ölçmə kamerasının referans mühitini göstərir.",
   },
 ];

@@ -30,7 +30,8 @@ class SimulationConfig(BaseModel):
     default_sand_flow_rate: float = 0.0
     default_water_flow_rate: float = 0.0
     default_drain_rate: float = 0.0
-    max_buoyancy_force_n: float = 7.5
+    buoyancy_start_level: float = 0.15
+    buoyancy_gain_n: float = 50.0
 
 
 CONFIG = SimulationConfig()

@@ -1,13 +1,9 @@
 import { ActivitySquare, Droplets, Filter, Gauge, PackageOpen, Route, Sigma } from "lucide-react";
 import { useTelemetryStore } from "../store/telemetryStore";
 
-const modeText = {
-  pid: "PID ilə qapalı idarəetmə",
-  open_loop: "PID-siz açıq idarəetmə",
-};
-
 export function RealismInsights() {
   const telemetry = useTelemetryStore((state) => state.telemetry);
+  const apparentLoss = Math.max(telemetry.mass - telemetry.apparentMass, 0);
 
   const measurementCards = [
     { label: "Ölçülmüş məsafə", value: `${(telemetry.measuredDistance * 100).toFixed(3)} sm` },
@@ -17,7 +13,7 @@ export function RealismInsights() {
   ];
 
   const qualityCards = [
-    { label: "Rejim", value: modeText[telemetry.controlMode] },
+    { label: "İdarəetmə", value: "PID ilə qapalı idarəetmə" },
     { label: "Maksimal xəta", value: `${(telemetry.overshoot * 1000).toFixed(1)} mm` },
     { label: "Qərarlaşma müddəti", value: telemetry.settlingTime === null ? "hələ sabitləşmir" : `${telemetry.settlingTime.toFixed(2)} s` },
     { label: "Rəqslərin sayı", value: `${telemetry.oscillationCount}` },
@@ -28,12 +24,13 @@ export function RealismInsights() {
     { label: "Materialdakı su", value: `${telemetry.waterMass.toFixed(2)} kq` },
     { label: "Kamera dolması", value: `${(telemetry.materialFill * 100).toFixed(0)}%` },
     { label: "Su səviyyəsi", value: `${(telemetry.waterLevel * 100).toFixed(0)}%` },
-    { label: "Üzəmə qüvvəsi", value: `${telemetry.buoyancyForce.toFixed(2)} N` },
-    { label: "Görünən kütlə", value: `${telemetry.apparentMass.toFixed(2)} kq` },
+    { label: "Suyun qaldırıcı qüvvəsi", value: `${telemetry.buoyancyForce.toFixed(2)} N` },
+    { label: "Maqnitin hiss etdiyi çəki", value: `${telemetry.apparentMass.toFixed(2)} kq` },
+    { label: "Çəki azalması", value: `${apparentLoss.toFixed(2)} kq` },
   ];
 
   const deviceMapCards = [
-    { label: "1. Dartı qovşağı", value: "Görünən kütlə və cərəyanla təmsil olunur" },
+    { label: "1. Dartı qovşağı", value: "Maqnitin hiss etdiyi görünən çəki və cərəyanla təmsil olunur" },
     { label: "2. Solenoid", value: "3D səhnədəki mis dolaq" },
     { label: "3. Sabit maqnit", value: "N/S işarəli levitasiya edən içlik" },
     { label: "4. Ölçü kamerası", value: "Şəffaf kamera, qum və su burada toplanır" },
@@ -60,8 +57,8 @@ export function RealismInsights() {
           <ol className="process-list">
             <li>Qum bunkerdən ölçü kamerasına tökülür və quru material kütləsi artır.</li>
             <li>Su çəndən boru ilə kameraya verilir və materialın rütubəti artır.</li>
-            <li>Rütubət və kamera dolması dəyişdikcə görünən yük dəyişir.</li>
-            <li>Kütlə dəyişdiyi üçün ağırlıq qüvvəsi və solenoidə lazım olan cərəyan dəyişir.</li>
+            <li>Su səviyyəsi artdıqca qaldırıcı qüvvə artır və maqnitin hiss etdiyi görünən çəki azalır.</li>
+            <li>Görünən çəki azaldığı üçün solenoidə lazım olan saxlayıcı cərəyan azalır.</li>
             <li>Sensor məsafə və cərəyanı səs-küylü şəkildə ölçür.</li>
             <li>Filtr ölçməni yumşaldır və rütubət filtrlənmiş dəyərlərdən hesablanır.</li>
           </ol>
@@ -76,11 +73,12 @@ export function RealismInsights() {
             <strong>Fm = k · I² / d²</strong>
             <strong>m görünən = Fm / g</strong>
             <strong>w = su kütləsi / quru material kütləsi</strong>
-            <strong>Görünən çəki = mg - F üzəmə</strong>
+            <strong>Görünən çəki = mg - F qaldırıcı</strong>
           </div>
           <p className="chart-caption">
-            Burada I filtrlənmiş solenoid cərəyanı, d isə filtrlənmiş levitasiya məsafəsidir. Su çoxaldıqda real kütlə
-            artır, lakin kamera maye mühiti kimi işləyəndə üzəmə qüvvəsi görünən çəkini bir qədər azalda bilər.
+            Burada I filtrlənmiş solenoid cərəyanı, d isə filtrlənmiş levitasiya məsafəsidir. Adi tərəzidə su kütləni
+            artırır; bu maqnit asqılı ölçmədə isə suyun qaldırıcı təsiri maqnitin hiss etdiyi görünən çəkini azaldır.
+            Rütubət həmin görünən çəki və cərəyan dəyişikliyi ilə qiymətləndirilir.
           </p>
         </article>
 
@@ -132,7 +130,7 @@ export function RealismInsights() {
         <article className="realism-card">
           <div className="section-title">
             <ActivitySquare size={18} />
-            <h3>PID-siz və PID-li müqayisə</h3>
+            <h3>PID sabitləşdirmə göstəriciləri</h3>
           </div>
           <div className="compact-metric-grid">
             {qualityCards.map((item) => (
@@ -143,8 +141,20 @@ export function RealismInsights() {
             ))}
           </div>
           <p className="chart-caption">
-            PID-li rejimdə sistem məsafə xətasına reaksiya verir. PID-siz rejimdə isə yalnız əvvəlcədən hesablanmış
-            balans cərəyanı verilir və sistem xarici təsirə daha zəif cavab verir.
+            PID tənzimləyicisi Hall/yerdəyişmə siqnalına baxır və solenoid cərəyanını daim düzəldir. Buna görə suyun
+            yaratdığı görünən çəki dəyişikliyi zamanı maqnit hədəf məsafədə saxlanılır.
+          </p>
+        </article>
+
+        <article className="realism-card">
+          <div className="section-title">
+            <Gauge size={18} />
+            <h3>Müdafiədə qısa izah</h3>
+          </div>
+          <p className="chart-caption">
+            Quru-nəm rütubət hesabında su kütləsi m(yaş) - m(quru) fərqidir. Maqnit asqılı qurğuda isə əsas ölçülən
+            siqnal maqnitin hiss etdiyi görünən çəkidir. Su səviyyəsi artdıqca qaldırıcı qüvvə artır, görünən çəki
+            azalır və solenoid cərəyanı dəyişir. Bu dəyişmə kalibrasiya olunaraq rütubətə çevrilir.
           </p>
         </article>
       </div>

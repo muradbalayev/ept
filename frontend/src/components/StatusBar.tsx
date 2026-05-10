@@ -24,7 +24,7 @@ export function StatusBar() {
       </div>
       <div className="status-reading">
         <Power size={17} />
-        Ağırlıq qüvvəsi {telemetry.gravityForce.toFixed(1)} N
+        Görünən çəki {(telemetry.apparentMass * 9.81).toFixed(1)} N
       </div>
       <div className="status-reading">
         t = {telemetry.time.toFixed(2)} s

@@ -55,7 +55,7 @@ def test_sand_flow_increases_dry_material_and_fill() -> None:
     assert after.materialFill > before.materialFill
 
 
-def test_water_flow_increases_water_mass_and_true_moisture() -> None:
+def test_water_flow_increases_moisture_and_decreases_apparent_mass() -> None:
     simulator = Simulator()
     before = simulator.telemetry()
 
@@ -68,6 +68,8 @@ def test_water_flow_increases_water_mass_and_true_moisture() -> None:
 
     assert after.waterMass > before.waterMass
     assert after.trueMoisture > before.trueMoisture
+    assert after.apparentMass < before.apparentMass
+    assert after.buoyancyForce > before.buoyancyForce
 
 
 def test_drain_decreases_water_mass() -> None:
@@ -95,7 +97,7 @@ def test_high_water_level_creates_buoyancy_and_apparent_mass_drop() -> None:
     assert telemetry.apparentMass < telemetry.mass
 
 
-def test_higher_moisture_requires_more_solenoid_current() -> None:
+def test_higher_moisture_reduces_apparent_load_and_solenoid_current() -> None:
     dry_simulator = Simulator()
     dry_simulator.set_parameters(ParameterUpdate(moisture=0.02, sensorNoise=0.0))
     dry_simulator.start()
@@ -108,7 +110,8 @@ def test_higher_moisture_requires_more_solenoid_current() -> None:
         dry_simulator.step(1.0 / 60.0)
         wet_simulator.step(1.0 / 60.0)
 
-    assert wet_simulator.telemetry().current > dry_simulator.telemetry().current
+    assert wet_simulator.telemetry().apparentMass < dry_simulator.telemetry().apparentMass
+    assert wet_simulator.telemetry().current < dry_simulator.telemetry().current
 
 
 def test_reset_restores_material_process_state() -> None:
@@ -153,19 +156,15 @@ def test_sensor_noise_and_filter_create_measured_and_filtered_values() -> None:
     assert telemetry.filteredCurrent != telemetry.measuredCurrent
 
 
-def test_pid_mode_reduces_error_better_than_open_loop() -> None:
-    pid_simulator = Simulator()
-    pid_simulator.set_parameters(ParameterUpdate(controlMode="pid", sensorNoise=0.0))
-    pid_simulator.start()
+def test_pid_control_reduces_distance_error() -> None:
+    simulator = Simulator()
+    simulator.set_parameters(ParameterUpdate(sensorNoise=0.0))
+    before = abs(simulator.telemetry().error)
 
-    open_loop_simulator = Simulator()
-    open_loop_simulator.set_parameters(ParameterUpdate(controlMode="open_loop", sensorNoise=0.0))
-    open_loop_simulator.start()
-
+    simulator.start()
     for _ in range(120):
-        pid_simulator.step(1.0 / 60.0)
-        open_loop_simulator.step(1.0 / 60.0)
+        simulator.step(1.0 / 60.0)
 
-    assert abs(pid_simulator.telemetry().error) < abs(open_loop_simulator.telemetry().error)
-    assert pid_simulator.telemetry().controlMode == "pid"
-    assert open_loop_simulator.telemetry().controlMode == "open_loop"
+    after = abs(simulator.telemetry().error)
+
+    assert after < before

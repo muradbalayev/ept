@@ -47,3 +47,78 @@ cd C:\Users\user\Desktop\ept\maglev-digital-twin\backend
 cd C:\Users\user\Desktop\ept\maglev-digital-twin\frontend
 npm run build
 ```
+
+## Production deploy
+
+Tövsiyə olunan arxitektura:
+
+- Frontend: Vercel
+- Backend: Render, Railway və ya Fly.io
+
+Səbəb: Vercel statik React/Vite frontend üçün çox uyğundur, amma FastAPI WebSocket serveri davamlı bağlantı saxladığına görə ayrıca backend hostinqində işləməlidir.
+
+### 1. Backend deploy
+
+Render nümunəsi:
+
+1. GitHub reposunu Render-ə qoş.
+2. New Web Service seç.
+3. Root Directory: `backend`
+4. Build Command:
+
+```bash
+pip install -r requirements.txt
+```
+
+5. Start Command:
+
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port $PORT
+```
+
+6. Frontend deploy olandan sonra backend environment variable əlavə et:
+
+```text
+CORS_ORIGINS=https://your-vercel-domain.vercel.app
+```
+
+Backend URL nümunəsi:
+
+```text
+https://maglev-digital-twin-api.onrender.com
+```
+
+WebSocket URL belə olacaq:
+
+```text
+wss://maglev-digital-twin-api.onrender.com/ws/telemetry
+```
+
+### 2. Frontend deploy
+
+Vercel-də project root kimi `frontend` seç.
+
+Build ayarları:
+
+```text
+Framework Preset: Vite
+Build Command: npm run build
+Output Directory: dist
+```
+
+Environment variable:
+
+```text
+VITE_BACKEND_WS_URL=wss://maglev-digital-twin-api.onrender.com/ws/telemetry
+```
+
+Sonra Vercel frontend-i rebuild et.
+
+### 3. Production yoxlama
+
+Deploydan sonra:
+
+- `/api/config` backend-də açılmalıdır.
+- Frontend yuxarıda “Canlı əlaqə aktivdir” göstərməlidir.
+- Start düyməsi telemetry-ni hərəkətə gətirməlidir.
+- Qrafiklər boş qalmamalıdır.

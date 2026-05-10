@@ -12,7 +12,6 @@ class Simulator:
         self.physics = PhysicsEngine(config)
         self.pid = PIDController(config.default_kp, config.default_ki, config.default_kd)
         self.running = False
-        self.control_mode = "pid"
         self.sensor_noise = config.default_sensor_noise
         self.filter_strength = config.default_filter_strength
         self.sand_flow_rate = config.default_sand_flow_rate
@@ -57,10 +56,6 @@ class Simulator:
     def set_parameters(self, update: ParameterUpdate) -> None:
         self.pid.configure(update.kp, update.ki, update.kd)
 
-        if update.controlMode is not None and update.controlMode != self.control_mode:
-            self.control_mode = update.controlMode
-            self.pid.reset()
-            self._reset_quality_metrics()
         if update.moisture is not None:
             self.state.moisture = clamp(update.moisture, self.config.min_moisture, self.config.max_moisture)
             self.water_mass = self.dry_material_mass * self.state.moisture
@@ -90,12 +85,8 @@ class Simulator:
         self.state.moisture = self._true_moisture()
         mass = self._apparent_mass()
         error = self.state.distance - self.state.target_distance
-        if self.control_mode == "pid":
-            feed_forward = self.physics.equilibrium_current(mass, self.state.distance)
-            pid_trim = self.pid.update(error, dt)
-        else:
-            feed_forward = self.physics.equilibrium_current(mass, self.state.target_distance)
-            pid_trim = 0.0
+        feed_forward = self.physics.equilibrium_current(mass, self.state.distance)
+        pid_trim = self.pid.update(error, dt)
         requested_current = feed_forward + pid_trim
         self.state = self.physics.step(self.state, requested_current, dt, effective_mass=mass)
         self._update_quality_metrics()
@@ -144,7 +135,6 @@ class Simulator:
             magneticForce=magnetic,
             gravityForce=gravity,
             stability=stability,
-            controlMode=self.control_mode,
             sensorNoise=self.sensor_noise,
             filterStrength=self.filter_strength,
             settlingTime=self.settling_time,
@@ -182,8 +172,13 @@ class Simulator:
         return clamp(self._true_moisture() / self.config.max_moisture, 0.0, 1.0)
 
     def _buoyancy_force(self) -> float:
-        immersion = clamp((self._water_level() - 0.65) / 0.35, 0.0, 1.0)
-        return immersion * self.config.max_buoyancy_force_n
+        immersion = clamp(
+            (self._water_level() - self.config.buoyancy_start_level) / (1.0 - self.config.buoyancy_start_level),
+            0.0,
+            1.0,
+        )
+        max_physical_buoyancy = max(self._total_mass() * self.config.gravity - 0.1, 0.0)
+        return min(immersion * self.config.buoyancy_gain_n, max_physical_buoyancy)
 
     def _apparent_mass(self) -> float:
         return max(self._total_mass() - self._buoyancy_force() / self.config.gravity, 0.1)

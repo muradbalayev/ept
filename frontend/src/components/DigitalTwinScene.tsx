@@ -93,6 +93,7 @@ function TargetPlane({ targetDistance }: { targetDistance: number }) {
         <meshBasicMaterial color="#ffd166" transparent opacity={0.85} />
       </mesh>
       <Line points={[[-0.45, 0, 0], [0.45, 0, 0]]} color="#ffd166" lineWidth={1.4} transparent opacity={0.55} />
+      <DeviceLabel position={[-0.52, -0.08, 0]} >Referans halqası</DeviceLabel>
     </group>
   );
 }
@@ -115,6 +116,7 @@ function MeasurementChamber({ materialFill, waterLevel }: { materialFill: number
         <cylinderGeometry args={[0.31, 0.32, sandHeight, 48]} />
         <meshStandardMaterial color="#d5a15e" roughness={0.92} />
       </mesh>
+      <DeviceLabel position={[-0.42, -0.28, 0.04]} >Material nümunəsi</DeviceLabel>
       {waterHeight > 0.01 && (
         <mesh position={[0, -0.35 + waterHeight / 2, 0]}>
           <cylinderGeometry args={[0.32, 0.32, waterHeight, 48]} />
@@ -276,6 +278,7 @@ function TwinObjects({ telemetry }: { telemetry: Telemetry }) {
           <cylinderGeometry args={[0.75, 0.75, 0.04, 80]} />
           <meshStandardMaterial color="#d9e2dc" metalness={0.18} roughness={0.65} />
         </mesh>
+        <DeviceLabel position={[0.55, -0.31, 0]} >Dayaq platforması</DeviceLabel>
         <gridHelper args={[2.2, 12, "#9dacA4", "#d3ded8"]} position={[0, -0.2, 0]} />
       </group>
     </>

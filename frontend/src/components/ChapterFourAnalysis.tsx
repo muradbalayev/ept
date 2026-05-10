@@ -14,8 +14,8 @@ const blocks = [
 ];
 
 const formulas = [
-  { title: "Rütubət-kütlə", value: "m = m₀ · (1 + w)" },
-  { title: "Ağırlıq qüvvəsi", value: "Fg = m · g" },
+  { title: "Rütubət", value: "W = (myaş - mquru) / mquru · 100%" },
+  { title: "Görünən çəki", value: "Fapp = m·g - Fqaldırıcı" },
   { title: "Maqnit qüvvəsi", value: "Fm = k · I² / d²" },
   { title: "PID idarəetmə", value: "u = Kp·e + Ki∫e dt + Kd·de/dt" },
 ];
@@ -81,9 +81,9 @@ export function ChapterFourAnalysis() {
         <div>
           <h3>Bu proqram nəyi sübut edir?</h3>
           <p>
-            Bu panel 4-cü fəsildə verilən qapalı maqnit levitasiya sisteminin rəqəmsal əkizidir. Rütubət materialın
-            kütləsini dəyişir, kütlə ağırlıq qüvvəsini artırır, PID tənzimləyicisi isə solenoid cərəyanını dəyişərək
-            obyekti hədəf məsafəyə qaytarır.
+            Bu panel 4-cü fəsildə verilən qapalı maqnit levitasiya sisteminin rəqəmsal əkizidir. Su əlavə olunduqda
+            real kütlə artsa da, ölçü kamerasındakı qaldırıcı təsir maqnitin hiss etdiyi görünən çəkini azaldır. PID
+            tənzimləyicisi həmin dəyişməyə uyğun solenoid cərəyanını düzəldərək obyekti hədəf məsafəyə qaytarır.
           </p>
         </div>
         <div>
@@ -141,8 +141,8 @@ export function ChapterFourAnalysis() {
           <div className="model-note">
             <Sigma size={18} />
             <p>
-              Hazır dəyərlər: rütubət {(telemetry.moisture * 100).toFixed(1)}%, kütlə {telemetry.mass.toFixed(2)} kq,
-              solenoid cərəyanı {telemetry.current.toFixed(2)} A, hədəf məsafə {(telemetry.targetDistance * 100).toFixed(1)} sm.
+              Hazır dəyərlər: rütubət {(telemetry.moisture * 100).toFixed(1)}%, real kütlə {telemetry.mass.toFixed(2)} kq,
+              maqnitin hiss etdiyi çəki {telemetry.apparentMass.toFixed(2)} kq, solenoid cərəyanı {telemetry.current.toFixed(2)} A.
             </p>
           </div>
         </section>

@@ -99,14 +99,14 @@ export function Charts() {
           data: history.map((point) => Number((point.moistureError * 100).toFixed(3))),
         },
         {
-          name: "Kütlə",
+          name: "Real kütlə",
           type: "line",
           smooth: true,
           showSymbol: false,
           data: history.map((point) => Number(point.mass.toFixed(2))),
         },
         {
-          name: "Görünən kütlə",
+          name: "Maqnitin hiss etdiyi çəki",
           type: "line",
           smooth: true,
           showSymbol: false,

@@ -236,38 +236,6 @@ h2 {
   margin-bottom: 18px;
 }
 
-.mode-selector {
-  display: grid;
-  gap: 8px;
-  margin-bottom: 18px;
-}
-
-.mode-selector > span {
-  color: #2b3b33;
-  font-size: 0.9rem;
-}
-
-.mode-buttons {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.mode-button {
-  min-height: 40px;
-  border: 1px solid #bdcbc4;
-  border-radius: 8px;
-  background: #f5f8f6;
-  color: #26342d;
-  cursor: pointer;
-}
-
-.mode-button.active {
-  color: #ffffff;
-  background: var(--teal);
-  border-color: var(--teal);
-}
-
 .command,
 .icon-command {
   min-height: 40px;
@@ -393,6 +361,14 @@ input[type="range"] {
   margin-top: 14px;
 }
 
+.transition-chart-grid.single {
+  grid-template-columns: 1fr;
+}
+
+.transition-chart-grid.matlab-scope-layout {
+  grid-template-columns: minmax(0, 1.08fr) minmax(360px, 0.92fr);
+}
+
 .transition-chart-panel {
   display: grid;
   gap: 8px;
@@ -400,6 +376,93 @@ input[type="range"] {
 
 .transition-chart {
   height: 430px !important;
+}
+
+.pid-settling-chart {
+  min-height: 460px;
+  border: 1px solid #1c251f;
+  background: #ffffff;
+}
+
+.scope-panel {
+  align-content: start;
+}
+
+.scope-window {
+  overflow: hidden;
+  border: 1px solid #9aa3a0;
+  border-radius: 5px;
+  background: #d8dcda;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.45);
+}
+
+.scope-titlebar,
+.scope-menubar,
+.scope-toolbar,
+.scope-footer {
+  display: flex;
+  align-items: center;
+  color: #1d2924;
+  font-size: 0.76rem;
+}
+
+.scope-titlebar {
+  justify-content: space-between;
+  min-height: 26px;
+  padding: 0 10px;
+  background: #e6eeee;
+  border-bottom: 1px solid #c3cdca;
+}
+
+.scope-window-buttons {
+  color: #26342d;
+  font-size: 0.84rem;
+}
+
+.scope-menubar {
+  min-height: 28px;
+  padding: 0 10px;
+  background: #f6f6f3;
+  border-bottom: 1px solid #c9d0cd;
+}
+
+.scope-toolbar {
+  min-height: 34px;
+  gap: 8px;
+  padding: 5px 9px;
+  background: #e8e9e6;
+  border-bottom: 1px solid #b8c0bc;
+}
+
+.scope-toolbar span {
+  width: 18px;
+  height: 18px;
+  border: 1px solid #7d8884;
+  border-radius: 4px;
+  background: linear-gradient(#ffffff, #bfc8c4);
+}
+
+.scope-toolbar span.play {
+  border-color: #4e812a;
+  background: #7fbd47;
+  clip-path: polygon(16% 8%, 16% 92%, 92% 50%);
+}
+
+.scope-chart {
+  height: 470px !important;
+  background: #000000;
+}
+
+.scope-footer {
+  justify-content: space-between;
+  min-height: 26px;
+  padding: 0 8px;
+  background: #d7d9d6;
+  border-top: 1px solid #a5aeaa;
+}
+
+.legacy-transition-hidden {
+  display: none;
 }
 
 .chart-caption {

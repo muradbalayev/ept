@@ -1,5 +1,4 @@
 export type Stability = "stable" | "oscillating" | "high_current" | "levitation_lost";
-export type ControlMode = "pid" | "open_loop";
 
 export interface Telemetry {
   time: number;
@@ -29,7 +28,6 @@ export interface Telemetry {
   magneticForce: number;
   gravityForce: number;
   stability: Stability;
-  controlMode: ControlMode;
   sensorNoise: number;
   filterStrength: number;
   settlingTime: number | null;
@@ -43,7 +41,6 @@ export interface ControlParameters {
   kd: number;
   moisture: number;
   targetDistance: number;
-  controlMode: ControlMode;
   sensorNoise: number;
   filterStrength: number;
   sandFlowRate: number;
