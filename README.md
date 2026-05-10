@@ -53,30 +53,36 @@ npm run build
 Tövsiyə olunan arxitektura:
 
 - Frontend: Vercel
-- Backend: Render, Railway və ya Fly.io
+- Backend: Railway, Render və ya Fly.io
 
 Səbəb: Vercel statik React/Vite frontend üçün çox uyğundur, amma FastAPI WebSocket serveri davamlı bağlantı saxladığına görə ayrıca backend hostinqində işləməlidir.
 
 ### 1. Backend deploy
 
-Render nümunəsi:
+Railway üçün ən rahat variant bu repoda hazır olan `railway.json` faylından istifadə etməkdir.
 
-1. GitHub reposunu Render-ə qoş.
-2. New Web Service seç.
-3. Root Directory: `backend`
-4. Build Command:
+Railway service ayarları:
 
-```bash
-pip install -r requirements.txt
+- Root Directory: boş saxla və ya `/`
+- Config File: `/railway.json`
+- Custom Build Command: boş saxla
+- Custom Start Command: boş saxla
+
+`railway.json` özü bunu işlədir:
+
+```json
+{
+  "build": {
+    "buildCommand": "pip install -r backend/requirements.txt"
+  },
+  "deploy": {
+    "startCommand": "cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT",
+    "healthcheckPath": "/api/health"
+  }
+}
 ```
 
-5. Start Command:
-
-```bash
-uvicorn app.main:app --host 0.0.0.0 --port $PORT
-```
-
-6. Frontend deploy olandan sonra backend environment variable əlavə et:
+Frontend deploy olandan sonra Railway backend environment variable əlavə et:
 
 ```text
 CORS_ORIGINS=https://your-vercel-domain.vercel.app
@@ -91,8 +97,16 @@ https://maglev-digital-twin-api.onrender.com
 WebSocket URL belə olacaq:
 
 ```text
-wss://maglev-digital-twin-api.onrender.com/ws/telemetry
+wss://your-railway-domain.up.railway.app/ws/telemetry
 ```
+
+Backend yoxlama URL-i:
+
+```text
+https://your-railway-domain.up.railway.app/api/health
+```
+
+Bu URL `{"ok":true,...}` qaytarmalıdır. Əgər `404` qaytarırsa, Railway hələ FastAPI backend-i deyil, yanlış folderi və ya yanlış start command-ı deploy edir.
 
 ### 2. Frontend deploy
 
