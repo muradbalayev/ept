@@ -23,6 +23,14 @@ class SimulationConfig(BaseModel):
     default_filter_strength: float = 0.25
     distance_noise_m_at_unit: float = 0.00035
     current_noise_a_at_unit: float = 0.04
+    max_dry_material_mass_kg: float = 12.0
+    sand_mass_rate_kg_s: float = 0.18
+    water_mass_rate_kg_s: float = 0.08
+    drain_rate_per_s: float = 0.08
+    default_sand_flow_rate: float = 0.0
+    default_water_flow_rate: float = 0.0
+    default_drain_rate: float = 0.0
+    max_buoyancy_force_n: float = 7.5
 
 
 CONFIG = SimulationConfig()

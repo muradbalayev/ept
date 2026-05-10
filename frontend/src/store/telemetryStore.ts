@@ -11,6 +11,15 @@ const initialTelemetry: Telemetry = {
   estimatedMoisture: 0.12,
   moistureError: 0,
   mass: 8.96,
+  dryMaterialMass: 8,
+  waterMass: 0.96,
+  materialFill: 0.67,
+  waterLevel: 0.3,
+  sandFlowRate: 0,
+  waterFlowRate: 0,
+  drainRate: 0,
+  buoyancyForce: 0,
+  apparentMass: 8.96,
   distance: 0.062,
   measuredDistance: 0.062,
   filteredDistance: 0.062,
@@ -39,6 +48,9 @@ const initialParameters: ControlParameters = {
   controlMode: "pid",
   sensorNoise: 0.35,
   filterStrength: 0.25,
+  sandFlowRate: 0,
+  waterFlowRate: 0,
+  drainRate: 0,
 };
 
 interface TelemetryStore {

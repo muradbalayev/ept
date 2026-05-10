@@ -15,18 +15,23 @@ class Simulator:
         self.control_mode = "pid"
         self.sensor_noise = config.default_sensor_noise
         self.filter_strength = config.default_filter_strength
+        self.sand_flow_rate = config.default_sand_flow_rate
+        self.water_flow_rate = config.default_water_flow_rate
+        self.drain_rate = config.default_drain_rate
+        self.dry_material_mass = config.base_mass_kg
+        self.water_mass = config.base_mass_kg * 0.12
         self.state = self._initial_state()
         self.filtered_distance = self.state.distance
         self.filtered_current = self.state.current
         self._reset_quality_metrics()
 
     def _initial_state(self) -> PhysicsState:
-        mass = self.physics.mass_for_moisture(0.12)
+        mass = self._apparent_mass()
         initial_distance = self.config.target_distance_m + 0.006
         current = self.physics.equilibrium_current(mass, initial_distance)
         return PhysicsState(
             time=0.0,
-            moisture=0.12,
+            moisture=self._true_moisture(),
             distance=initial_distance,
             velocity=0.0,
             current=current,
@@ -36,6 +41,8 @@ class Simulator:
     def reset(self) -> None:
         self.pid.reset()
         self.running = False
+        self.dry_material_mass = self.config.base_mass_kg
+        self.water_mass = self.config.base_mass_kg * 0.12
         self.state = self._initial_state()
         self.filtered_distance = self.state.distance
         self.filtered_current = self.state.current
@@ -56,6 +63,7 @@ class Simulator:
             self._reset_quality_metrics()
         if update.moisture is not None:
             self.state.moisture = clamp(update.moisture, self.config.min_moisture, self.config.max_moisture)
+            self.water_mass = self.dry_material_mass * self.state.moisture
         if update.targetDistance is not None:
             self.state.target_distance = clamp(
                 update.targetDistance,
@@ -67,12 +75,20 @@ class Simulator:
             self.sensor_noise = clamp(update.sensorNoise, 0.0, 2.0)
         if update.filterStrength is not None:
             self.filter_strength = clamp(update.filterStrength, 0.05, 1.0)
+        if update.sandFlowRate is not None:
+            self.sand_flow_rate = clamp(update.sandFlowRate, 0.0, 1.0)
+        if update.waterFlowRate is not None:
+            self.water_flow_rate = clamp(update.waterFlowRate, 0.0, 1.0)
+        if update.drainRate is not None:
+            self.drain_rate = clamp(update.drainRate, 0.0, 1.0)
 
     def step(self, dt: float) -> None:
         if not self.running:
             return
 
-        mass = self.physics.mass_for_moisture(self.state.moisture)
+        self._update_material_process(dt)
+        self.state.moisture = self._true_moisture()
+        mass = self._apparent_mass()
         error = self.state.distance - self.state.target_distance
         if self.control_mode == "pid":
             feed_forward = self.physics.equilibrium_current(mass, self.state.distance)
@@ -81,13 +97,20 @@ class Simulator:
             feed_forward = self.physics.equilibrium_current(mass, self.state.target_distance)
             pid_trim = 0.0
         requested_current = feed_forward + pid_trim
-        self.state = self.physics.step(self.state, requested_current, dt)
+        self.state = self.physics.step(self.state, requested_current, dt, effective_mass=mass)
         self._update_quality_metrics()
 
     def telemetry(self) -> Telemetry:
         measured_distance, measured_current = self._sample_sensors()
-        estimated_moisture = self.physics.estimate_moisture(self.filtered_current, self.filtered_distance)
-        mass = self.physics.mass_for_moisture(self.state.moisture)
+        buoyancy = self._buoyancy_force()
+        estimated_moisture = self.physics.estimate_moisture_for_dry_mass(
+            self.filtered_current,
+            self.filtered_distance,
+            self.dry_material_mass,
+            buoyancy,
+        )
+        mass = self._total_mass()
+        apparent_mass = self._apparent_mass()
         error = self.state.distance - self.state.target_distance
         magnetic = self.physics.magnetic_force(self.state.current, self.state.distance)
         gravity = self.physics.gravity_force(mass)
@@ -101,6 +124,15 @@ class Simulator:
             estimatedMoisture=estimated_moisture,
             moistureError=estimated_moisture - self.state.moisture,
             mass=mass,
+            dryMaterialMass=self.dry_material_mass,
+            waterMass=self.water_mass,
+            materialFill=self._material_fill(),
+            waterLevel=self._water_level(),
+            sandFlowRate=self.sand_flow_rate,
+            waterFlowRate=self.water_flow_rate,
+            drainRate=self.drain_rate,
+            buoyancyForce=buoyancy,
+            apparentMass=apparent_mass,
             distance=self.state.distance,
             measuredDistance=measured_distance,
             filteredDistance=self.filtered_distance,
@@ -119,6 +151,42 @@ class Simulator:
             overshoot=self.overshoot,
             oscillationCount=self.oscillation_count,
         )
+
+    def _update_material_process(self, dt: float) -> None:
+        dt = clamp(dt, 0.0, 0.04)
+        self.dry_material_mass = clamp(
+            self.dry_material_mass + self.sand_flow_rate * self.config.sand_mass_rate_kg_s * dt,
+            self.config.base_mass_kg,
+            self.config.max_dry_material_mass_kg,
+        )
+
+        added_water = self.water_flow_rate * self.config.water_mass_rate_kg_s * dt
+        drained_water = self.drain_rate * self.config.drain_rate_per_s * self.water_mass * dt
+        max_water_mass = self.dry_material_mass * self.config.max_moisture
+        self.water_mass = clamp(self.water_mass + added_water - drained_water, 0.0, max_water_mass)
+
+    def _true_moisture(self) -> float:
+        return clamp(
+            self.water_mass / max(self.dry_material_mass, 0.001),
+            self.config.min_moisture,
+            self.config.max_moisture,
+        )
+
+    def _total_mass(self) -> float:
+        return self.dry_material_mass + self.water_mass
+
+    def _material_fill(self) -> float:
+        return clamp(self.dry_material_mass / self.config.max_dry_material_mass_kg, 0.0, 1.0)
+
+    def _water_level(self) -> float:
+        return clamp(self._true_moisture() / self.config.max_moisture, 0.0, 1.0)
+
+    def _buoyancy_force(self) -> float:
+        immersion = clamp((self._water_level() - 0.65) / 0.35, 0.0, 1.0)
+        return immersion * self.config.max_buoyancy_force_n
+
+    def _apparent_mass(self) -> float:
+        return max(self._total_mass() - self._buoyancy_force() / self.config.gravity, 0.1)
 
     def _sample_sensors(self) -> tuple[float, float]:
         t = self.state.time

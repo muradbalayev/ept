@@ -86,6 +86,8 @@ h2 {
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
+  max-width: calc(100% - 32px);
+  flex-wrap: wrap;
 }
 
 .connection,
@@ -186,6 +188,25 @@ h2 {
 
 .scene-readout strong {
   color: var(--teal);
+}
+
+.scene-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 140px;
+  padding: 5px 8px;
+  border: 1px solid rgba(15, 143, 132, 0.36);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.92);
+  color: #16251e;
+  font-size: 0.68rem;
+  font-weight: 800;
+  line-height: 1.15;
+  text-align: center;
+  white-space: normal;
+  box-shadow: 0 8px 20px rgba(31, 51, 42, 0.13);
+  pointer-events: none;
 }
 
 .side-stack {
@@ -701,6 +722,12 @@ input[type="range"] {
   .scene-panel,
   .scene-frame {
     min-height: 420px;
+  }
+
+  .scene-label {
+    max-width: 92px;
+    padding: 4px 6px;
+    font-size: 0.62rem;
   }
 
   .connection,

@@ -9,6 +9,15 @@ export interface Telemetry {
   estimatedMoisture: number;
   moistureError: number;
   mass: number;
+  dryMaterialMass: number;
+  waterMass: number;
+  materialFill: number;
+  waterLevel: number;
+  sandFlowRate: number;
+  waterFlowRate: number;
+  drainRate: number;
+  buoyancyForce: number;
+  apparentMass: number;
   distance: number;
   measuredDistance: number;
   filteredDistance: number;
@@ -37,6 +46,9 @@ export interface ControlParameters {
   controlMode: ControlMode;
   sensorNoise: number;
   filterStrength: number;
+  sandFlowRate: number;
+  waterFlowRate: number;
+  drainRate: number;
 }
 
 export type WsMessage =

@@ -68,7 +68,7 @@ export function Charts() {
     const times = history.map((point) => point.time.toFixed(1));
     return {
       backgroundColor: "transparent",
-      color: ["#7c83ff", "#06d6a0", "#ffd166"],
+      color: ["#7c83ff", "#06d6a0", "#ffd166", "#a35f24", "#0f8f84", "#4f57c8"],
       tooltip: { trigger: "axis" },
       legend: { top: 0, textStyle: { color: legendText } },
       grid: { left: 48, right: 48, top: 42, bottom: 34 },
@@ -104,6 +104,28 @@ export function Charts() {
           smooth: true,
           showSymbol: false,
           data: history.map((point) => Number(point.mass.toFixed(2))),
+        },
+        {
+          name: "Görünən kütlə",
+          type: "line",
+          smooth: true,
+          showSymbol: false,
+          data: history.map((point) => Number(point.apparentMass.toFixed(2))),
+          lineStyle: { type: "dashed" },
+        },
+        {
+          name: "Su səviyyəsi",
+          type: "line",
+          smooth: true,
+          showSymbol: false,
+          data: history.map((point) => Number((point.waterLevel * 100).toFixed(2))),
+        },
+        {
+          name: "Kamera dolması",
+          type: "line",
+          smooth: true,
+          showSymbol: false,
+          data: history.map((point) => Number((point.materialFill * 100).toFixed(2))),
         },
       ],
     };

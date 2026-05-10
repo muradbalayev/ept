@@ -33,3 +33,16 @@ def test_estimated_moisture_matches_equilibrium_measurement() -> None:
     estimated = engine.estimate_moisture(current, CONFIG.target_distance_m)
 
     assert estimated == pytest.approx(moisture)
+
+
+def test_estimated_moisture_uses_dry_material_mass_and_buoyancy() -> None:
+    engine = PhysicsEngine(CONFIG)
+    dry_mass = 9.0
+    water_mass = 1.8
+    buoyancy = 2.0
+    apparent_mass = dry_mass + water_mass - buoyancy / CONFIG.gravity
+    current = engine.equilibrium_current(apparent_mass, CONFIG.target_distance_m)
+
+    estimated = engine.estimate_moisture_for_dry_mass(current, CONFIG.target_distance_m, dry_mass, buoyancy)
+
+    assert estimated == pytest.approx(water_mass / dry_mass)

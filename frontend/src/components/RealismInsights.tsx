@@ -1,4 +1,4 @@
-import { ActivitySquare, Filter, Gauge, Route, Sigma } from "lucide-react";
+import { ActivitySquare, Droplets, Filter, Gauge, PackageOpen, Route, Sigma } from "lucide-react";
 import { useTelemetryStore } from "../store/telemetryStore";
 
 const modeText = {
@@ -23,6 +23,24 @@ export function RealismInsights() {
     { label: "Rəqslərin sayı", value: `${telemetry.oscillationCount}` },
   ];
 
+  const materialCards = [
+    { label: "Quru material", value: `${telemetry.dryMaterialMass.toFixed(2)} kq` },
+    { label: "Materialdakı su", value: `${telemetry.waterMass.toFixed(2)} kq` },
+    { label: "Kamera dolması", value: `${(telemetry.materialFill * 100).toFixed(0)}%` },
+    { label: "Su səviyyəsi", value: `${(telemetry.waterLevel * 100).toFixed(0)}%` },
+    { label: "Üzəmə qüvvəsi", value: `${telemetry.buoyancyForce.toFixed(2)} N` },
+    { label: "Görünən kütlə", value: `${telemetry.apparentMass.toFixed(2)} kq` },
+  ];
+
+  const deviceMapCards = [
+    { label: "1. Dartı qovşağı", value: "Görünən kütlə və cərəyanla təmsil olunur" },
+    { label: "2. Solenoid", value: "3D səhnədəki mis dolaq" },
+    { label: "3. Sabit maqnit", value: "N/S işarəli levitasiya edən içlik" },
+    { label: "4. Ölçü kamerası", value: "Şəffaf kamera, qum və su burada toplanır" },
+    { label: "5-6. Sensorlar", value: "Hall elementi və yerdəyişmə şüası" },
+    { label: "7-8. Elektronika", value: "İdarəetmə bloku və cərəyan ölçən cihaz" },
+  ];
+
   return (
     <section className="realism-panel" aria-label="Metrologiya və real ölçmə izahı">
       <div className="chapter-heading">
@@ -40,7 +58,9 @@ export function RealismInsights() {
             <h3>Ölçmə ardıcıllığı</h3>
           </div>
           <ol className="process-list">
-            <li>Slider həqiqi rütubəti simulyasiya edir və materialın kütləsi dəyişir.</li>
+            <li>Qum bunkerdən ölçü kamerasına tökülür və quru material kütləsi artır.</li>
+            <li>Su çəndən boru ilə kameraya verilir və materialın rütubəti artır.</li>
+            <li>Rütubət və kamera dolması dəyişdikcə görünən yük dəyişir.</li>
             <li>Kütlə dəyişdiyi üçün ağırlıq qüvvəsi və solenoidə lazım olan cərəyan dəyişir.</li>
             <li>Sensor məsafə və cərəyanı səs-küylü şəkildə ölçür.</li>
             <li>Filtr ölçməni yumşaldır və rütubət filtrlənmiş dəyərlərdən hesablanır.</li>
@@ -54,13 +74,44 @@ export function RealismInsights() {
           </div>
           <div className="formula-stack">
             <strong>Fm = k · I² / d²</strong>
-            <strong>m = Fm / g</strong>
-            <strong>w = (m - m₀) / m₀</strong>
+            <strong>m görünən = Fm / g</strong>
+            <strong>w = su kütləsi / quru material kütləsi</strong>
+            <strong>Görünən çəki = mg - F üzəmə</strong>
           </div>
           <p className="chart-caption">
-            Burada I filtrlənmiş solenoid cərəyanı, d isə filtrlənmiş levitasiya məsafəsidir. Nəticədə sistem
-            rütubəti birbaşa qəbul etmir, ölçülmüş fiziki parametrlərdən qiymətləndirir.
+            Burada I filtrlənmiş solenoid cərəyanı, d isə filtrlənmiş levitasiya məsafəsidir. Su çoxaldıqda real kütlə
+            artır, lakin kamera maye mühiti kimi işləyəndə üzəmə qüvvəsi görünən çəkini bir qədər azalda bilər.
           </p>
+        </article>
+
+        <article className="realism-card">
+          <div className="section-title">
+            <PackageOpen size={18} />
+            <h3>Qum və su prosesinin canlı dəyərləri</h3>
+          </div>
+          <div className="compact-metric-grid">
+            {materialCards.map((item) => (
+              <div className="compact-metric" key={item.label}>
+                <span>{item.label}</span>
+                <strong>{item.value}</strong>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        <article className="realism-card">
+          <div className="section-title">
+            <Droplets size={18} />
+            <h3>Sxemdəki hissələrin 3D qarşılığı</h3>
+          </div>
+          <div className="compact-metric-grid">
+            {deviceMapCards.map((item) => (
+              <div className="compact-metric" key={item.label}>
+                <span>{item.label}</span>
+                <strong>{item.value}</strong>
+              </div>
+            ))}
+          </div>
         </article>
 
         <article className="realism-card">

@@ -1,4 +1,4 @@
-import { CircleDot, Goal, Magnet, RadioReceiver, Waves, Zap } from "lucide-react";
+import { CircleDot, Droplets, Goal, Magnet, PackageOpen, RadioReceiver, Waves, Zap } from "lucide-react";
 
 const sceneItems = [
   {
@@ -9,7 +9,17 @@ const sceneItems = [
   {
     icon: CircleDot,
     title: "Ortadakı levitasiya cismi",
-    text: "Rütubəti ölçülən material nümunəsini göstərir. Rütubət artanda kütlə artır və sistem daha çox cərəyan tələb edir.",
+    text: "Solenoid daxilində levitasiya edən sabit maqnit və onun daşıdığı material yükünü göstərir. N/S işarələri real sxemdəki sabit maqnitin qütbləridir.",
+  },
+  {
+    icon: PackageOpen,
+    title: "Qum girişi",
+    text: "Bərk-səpələnən materialın ölçü kamerasına daxil olduğu bunkerdir. Qum axını artdıqca quru material kütləsi və kamera dolması artır.",
+  },
+  {
+    icon: Droplets,
+    title: "Su girişi",
+    text: "Rütubəti yaratmaq üçün materiala verilən su xəttidir. Su axını artanda materialda su kütləsi, rütubət və tələb olunan solenoid cərəyanı dəyişir.",
   },
   {
     icon: Waves,

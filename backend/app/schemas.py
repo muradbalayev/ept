@@ -16,6 +16,9 @@ class ParameterUpdate(BaseModel):
     controlMode: ControlMode | None = None
     sensorNoise: float | None = Field(default=None, ge=0.0, le=2.0)
     filterStrength: float | None = Field(default=None, ge=0.05, le=1.0)
+    sandFlowRate: float | None = Field(default=None, ge=0.0, le=1.0)
+    waterFlowRate: float | None = Field(default=None, ge=0.0, le=1.0)
+    drainRate: float | None = Field(default=None, ge=0.0, le=1.0)
 
 
 class Telemetry(BaseModel):
@@ -26,6 +29,15 @@ class Telemetry(BaseModel):
     estimatedMoisture: float
     moistureError: float
     mass: float
+    dryMaterialMass: float
+    waterMass: float
+    materialFill: float
+    waterLevel: float
+    sandFlowRate: float
+    waterFlowRate: float
+    drainRate: float
+    buoyancyForce: float
+    apparentMass: float
     distance: float
     measuredDistance: float
     filteredDistance: float
