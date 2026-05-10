@@ -36,6 +36,12 @@ class PhysicsEngine:
         current = sqrt(self.gravity_force(mass) * safe_distance**2 / self.config.magnetic_constant)
         return clamp(current, self.config.min_current_a, self.config.max_current_a)
 
+    def estimate_moisture(self, current: float, distance: float) -> float:
+        magnetic = self.magnetic_force(current, distance)
+        estimated_mass = magnetic / self.config.gravity
+        moisture = (estimated_mass - self.config.base_mass_kg) / self.config.base_mass_kg
+        return clamp(moisture, self.config.min_moisture, self.config.max_moisture)
+
     def stability_for(self, error: float, velocity: float, current: float, distance: float) -> Stability:
         if distance >= self.config.max_distance_m * 0.96 or distance <= self.config.min_distance_m * 1.04:
             return "levitation_lost"

@@ -215,6 +215,38 @@ h2 {
   margin-bottom: 18px;
 }
 
+.mode-selector {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.mode-selector > span {
+  color: #2b3b33;
+  font-size: 0.9rem;
+}
+
+.mode-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.mode-button {
+  min-height: 40px;
+  border: 1px solid #bdcbc4;
+  border-radius: 8px;
+  background: #f5f8f6;
+  color: #26342d;
+  cursor: pointer;
+}
+
+.mode-button.active {
+  color: #ffffff;
+  background: var(--teal);
+  border-color: var(--teal);
+}
+
 .command,
 .icon-command {
   min-height: 40px;
@@ -407,6 +439,83 @@ input[type="range"] {
   box-shadow: 0 14px 38px rgba(31, 51, 42, 0.11);
 }
 
+.realism-panel {
+  margin-top: 14px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: 0 14px 38px rgba(31, 51, 42, 0.11);
+}
+
+.realism-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.realism-card {
+  padding: 14px;
+  border: 1px solid #d4dfd8;
+  border-radius: 8px;
+  background: #f8fbf9;
+}
+
+.process-list {
+  margin: 12px 0 0;
+  padding-left: 22px;
+  color: #43524a;
+  line-height: 1.55;
+}
+
+.process-list li + li {
+  margin-top: 7px;
+}
+
+.formula-stack {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.formula-stack strong {
+  display: block;
+  padding: 10px;
+  border: 1px solid #c9d7cf;
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--text);
+}
+
+.compact-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.compact-metric {
+  min-height: 74px;
+  display: grid;
+  align-content: space-between;
+  gap: 8px;
+  padding: 11px;
+  border: 1px solid #c9d7cf;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.compact-metric span {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.compact-metric strong {
+  color: var(--text);
+  font-size: 0.98rem;
+  line-height: 1.3;
+}
+
 .chapter-heading,
 .section-title {
   display: flex;
@@ -556,6 +665,7 @@ input[type="range"] {
   .dashboard-grid,
   .chart-grid,
   .transition-chart-grid,
+  .realism-grid,
   .analysis-layout,
   .chapter-summary,
   .formula-row {
@@ -583,7 +693,8 @@ input[type="range"] {
   .side-stack,
   .guide-grid,
   .metrics-grid,
-  .quality-grid {
+  .quality-grid,
+  .compact-metric-grid {
     grid-template-columns: 1fr;
   }
 

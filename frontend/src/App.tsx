@@ -4,6 +4,7 @@ import { ChapterFourAnalysis } from "./components/ChapterFourAnalysis";
 import { ControlPanel } from "./components/ControlPanel";
 import { DigitalTwinScene } from "./components/DigitalTwinScene";
 import { MetricGrid } from "./components/MetricGrid";
+import { RealismInsights } from "./components/RealismInsights";
 import { SceneGuide } from "./components/SceneGuide";
 import { StatusBar } from "./components/StatusBar";
 import { TransitionProcessCharts } from "./components/TransitionProcessCharts";
@@ -60,6 +61,7 @@ export default function App() {
 
       <SceneGuide />
       <Charts />
+      <RealismInsights />
       <TransitionProcessCharts />
       <ChapterFourAnalysis />
     </main>

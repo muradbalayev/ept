@@ -30,6 +30,22 @@ export function Charts() {
           data: history.map((point) => Number((point.distance * 100).toFixed(3))),
         },
         {
+          name: "Ölçülmüş məsafə",
+          type: "line",
+          smooth: true,
+          showSymbol: false,
+          data: history.map((point) => Number((point.measuredDistance * 100).toFixed(3))),
+          lineStyle: { type: "dashed" },
+        },
+        {
+          name: "Filtrlənmiş məsafə",
+          type: "line",
+          smooth: true,
+          showSymbol: false,
+          data: history.map((point) => Number((point.filteredDistance * 100).toFixed(3))),
+          lineStyle: { width: 3 },
+        },
+        {
           name: "Hədəf",
           type: "line",
           smooth: true,
@@ -58,22 +74,29 @@ export function Charts() {
       grid: { left: 48, right: 48, top: 42, bottom: 34 },
       xAxis: { type: "category", data: times, axisLabel: { color: axisText }, axisLine: { lineStyle: { color: gridLine } } },
       yAxis: [
-        { type: "value", name: "% / mm", axisLabel: { color: axisText }, splitLine: { lineStyle: { color: gridLine } } },
+        { type: "value", name: "% / kq", axisLabel: { color: axisText }, splitLine: { lineStyle: { color: gridLine } } },
       ],
       series: [
         {
-          name: "Rütubət",
+          name: "Həqiqi rütubət",
           type: "line",
           smooth: true,
           showSymbol: false,
-          data: history.map((point) => Number((point.moisture * 100).toFixed(2))),
+          data: history.map((point) => Number((point.trueMoisture * 100).toFixed(2))),
         },
         {
-          name: "Xəta",
+          name: "Hesablanan rütubət",
           type: "line",
           smooth: true,
           showSymbol: false,
-          data: history.map((point) => Number((point.error * 1000).toFixed(3))),
+          data: history.map((point) => Number((point.estimatedMoisture * 100).toFixed(2))),
+        },
+        {
+          name: "Ölçmə xətası",
+          type: "line",
+          smooth: true,
+          showSymbol: false,
+          data: history.map((point) => Number((point.moistureError * 100).toFixed(3))),
         },
         {
           name: "Kütlə",
@@ -101,7 +124,7 @@ export function Charts() {
         <div className="panel-heading compact">
           <div>
             <p className="eyebrow">MATERİAL</p>
-            <h2>Rütubət və xəta</h2>
+            <h2>Rütubətin ölçülməsi</h2>
           </div>
         </div>
         <ReactECharts option={qualityOption} className="chart" notMerge lazyUpdate />

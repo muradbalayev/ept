@@ -1,17 +1,31 @@
 export type Stability = "stable" | "oscillating" | "high_current" | "levitation_lost";
+export type ControlMode = "pid" | "open_loop";
 
 export interface Telemetry {
   time: number;
   running: boolean;
   moisture: number;
+  trueMoisture: number;
+  estimatedMoisture: number;
+  moistureError: number;
   mass: number;
   distance: number;
+  measuredDistance: number;
+  filteredDistance: number;
   targetDistance: number;
   current: number;
+  measuredCurrent: number;
+  filteredCurrent: number;
   error: number;
   magneticForce: number;
   gravityForce: number;
   stability: Stability;
+  controlMode: ControlMode;
+  sensorNoise: number;
+  filterStrength: number;
+  settlingTime: number | null;
+  overshoot: number;
+  oscillationCount: number;
 }
 
 export interface ControlParameters {
@@ -20,6 +34,9 @@ export interface ControlParameters {
   kd: number;
   moisture: number;
   targetDistance: number;
+  controlMode: ControlMode;
+  sensorNoise: number;
+  filterStrength: number;
 }
 
 export type WsMessage =

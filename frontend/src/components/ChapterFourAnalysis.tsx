@@ -61,10 +61,10 @@ export function ChapterFourAnalysis() {
   const quality = useMemo(() => calculateQuality(history), [history]);
 
   const qualityItems = [
-    { label: "Maksimal dinamik xəta", value: `${quality.maxDeviationMm.toFixed(1)} mm` },
-    { label: "Qərarlaşma müddəti", value: quality.settlingTime },
-    { label: "Rəqslərin sayı", value: `${quality.oscillations}` },
-    { label: "Son xəta", value: `${quality.finalErrorMm.toFixed(2)} mm` },
+    { label: "Maksimal dinamik xəta", value: `${(telemetry.overshoot * 1000 || quality.maxDeviationMm).toFixed(1)} mm` },
+    { label: "Qərarlaşma müddəti", value: telemetry.settlingTime === null ? quality.settlingTime : `${telemetry.settlingTime.toFixed(2)} s` },
+    { label: "Rəqslərin sayı", value: `${telemetry.oscillationCount || quality.oscillations}` },
+    { label: "Son xəta", value: `${Math.abs(telemetry.error * 1000 || quality.finalErrorMm).toFixed(2)} mm` },
   ];
 
   return (

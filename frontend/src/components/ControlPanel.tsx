@@ -1,8 +1,8 @@
 import { Pause, Play, RotateCcw, SlidersHorizontal } from "lucide-react";
 import { useTelemetryStore } from "../store/telemetryStore";
-import type { ControlParameters } from "../types/telemetry";
+import type { ControlMode, ControlParameters } from "../types/telemetry";
 
-type NumericKey = keyof ControlParameters;
+type NumericKey = Exclude<keyof ControlParameters, "controlMode">;
 
 const controls: Array<{
   key: NumericKey;
@@ -37,6 +37,29 @@ const controls: Array<{
     transform: (value) => value * 100,
     inverse: (value) => value / 100,
   },
+  {
+    key: "sensorNoise",
+    label: "Sensor səs-küyü",
+    min: 0,
+    max: 2,
+    step: 0.05,
+    unit: "x",
+  },
+  {
+    key: "filterStrength",
+    label: "Filtr gücü",
+    min: 0.05,
+    max: 1,
+    step: 0.05,
+    unit: "",
+    transform: (value) => value * 100,
+    inverse: (value) => value / 100,
+  },
+];
+
+const modeOptions: Array<{ value: ControlMode; label: string; description: string }> = [
+  { value: "pid", label: "PID ilə", description: "Cərəyan xəta əsasında düzəldilir." },
+  { value: "open_loop", label: "PID-siz", description: "Yalnız balans cərəyanı verilir." },
 ];
 
 export function ControlPanel() {
@@ -83,6 +106,23 @@ export function ControlPanel() {
         <button className="icon-command" title="Sistemi sıfırla" type="button" onClick={() => sendCommand({ type: "reset" })}>
           <RotateCcw size={18} />
         </button>
+      </div>
+
+      <div className="mode-selector" aria-label="İdarəetmə rejimi">
+        <span>İdarəetmə rejimi</span>
+        <div className="mode-buttons">
+          {modeOptions.map((mode) => (
+            <button
+              className={parameters.controlMode === mode.value ? "mode-button active" : "mode-button"}
+              key={mode.value}
+              title={mode.description}
+              type="button"
+              onClick={() => updateParameters({ controlMode: mode.value })}
+            >
+              {mode.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="slider-list">

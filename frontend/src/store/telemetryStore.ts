@@ -7,14 +7,27 @@ const initialTelemetry: Telemetry = {
   time: 0,
   running: false,
   moisture: 0.12,
+  trueMoisture: 0.12,
+  estimatedMoisture: 0.12,
+  moistureError: 0,
   mass: 8.96,
   distance: 0.062,
+  measuredDistance: 0.062,
+  filteredDistance: 0.062,
   targetDistance: 0.05,
   current: 10.5,
+  measuredCurrent: 10.5,
+  filteredCurrent: 10.5,
   error: 0.012,
   magneticForce: 55,
   gravityForce: 87.9,
   stability: "oscillating",
+  controlMode: "pid",
+  sensorNoise: 0.35,
+  filterStrength: 0.25,
+  settlingTime: null,
+  overshoot: 0.012,
+  oscillationCount: 0,
 };
 
 const initialParameters: ControlParameters = {
@@ -23,6 +36,9 @@ const initialParameters: ControlParameters = {
   kd: 35,
   moisture: 0.12,
   targetDistance: 0.05,
+  controlMode: "pid",
+  sensorNoise: 0.35,
+  filterStrength: 0.25,
 };
 
 interface TelemetryStore {

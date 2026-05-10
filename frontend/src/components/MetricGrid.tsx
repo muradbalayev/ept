@@ -5,7 +5,9 @@ const format = (value: number, digits = 2) => value.toFixed(digits);
 
 export function MetricGrid({ telemetry }: { telemetry: Telemetry }) {
   const metrics = [
-    { label: "Rütubət", value: `${format(telemetry.moisture * 100, 1)}%`, icon: Droplets, tone: "cyan" },
+    { label: "Həqiqi rütubət", value: `${format(telemetry.trueMoisture * 100, 1)}%`, icon: Droplets, tone: "cyan" },
+    { label: "Hesablanan rütubət", value: `${format(telemetry.estimatedMoisture * 100, 1)}%`, icon: Gauge, tone: "green" },
+    { label: "Ölçmə xətası", value: `${format(telemetry.moistureError * 100, 2)}%`, icon: Gauge, tone: "rose" },
     { label: "Kütlə", value: `${format(telemetry.mass, 2)} kq`, icon: Scale, tone: "amber" },
     { label: "Levitasiya məsafəsi", value: `${format(telemetry.distance * 100, 2)} sm`, icon: MoveVertical, tone: "green" },
     { label: "Solenoid cərəyanı", value: `${format(telemetry.current, 2)} A`, icon: Zap, tone: "copper" },

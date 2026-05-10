@@ -19,6 +19,10 @@ class SimulationConfig(BaseModel):
     air_damping: float = 4.2
     stable_error_m: float = 0.0025
     stable_velocity_mps: float = 0.006
+    default_sensor_noise: float = 0.35
+    default_filter_strength: float = 0.25
+    distance_noise_m_at_unit: float = 0.00035
+    current_noise_a_at_unit: float = 0.04
 
 
 CONFIG = SimulationConfig()

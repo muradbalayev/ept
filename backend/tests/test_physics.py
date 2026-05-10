@@ -1,3 +1,5 @@
+import pytest
+
 from app.config import CONFIG
 from app.physics import PhysicsEngine
 
@@ -20,3 +22,14 @@ def test_wetter_material_needs_more_equilibrium_current() -> None:
 
     assert wet_current > dry_current
     assert wet_current <= CONFIG.max_current_a
+
+
+def test_estimated_moisture_matches_equilibrium_measurement() -> None:
+    engine = PhysicsEngine(CONFIG)
+    moisture = 0.18
+    mass = engine.mass_for_moisture(moisture)
+    current = engine.equilibrium_current(mass, CONFIG.target_distance_m)
+
+    estimated = engine.estimate_moisture(current, CONFIG.target_distance_m)
+
+    assert estimated == pytest.approx(moisture)
