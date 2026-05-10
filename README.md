@@ -76,11 +76,12 @@ Railway service ayarları:
     "buildCommand": "pip install -r backend/requirements.txt"
   },
   "deploy": {
-    "startCommand": "cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT",
     "healthcheckPath": "/api/health"
   }
 }
 ```
+
+Qeyd: Dockerfile ilə deploy zamanı `startCommand` yazma. Railway Dockerfile start override-larını shell olmadan işə saldığı üçün `cd backend && ...` kimi komanda `cd` executable xətası verir. Bu layihədə backend `Dockerfile` artıq düzgün `CMD` saxlayır.
 
 Frontend deploy olandan sonra Railway backend environment variable əlavə et:
 
